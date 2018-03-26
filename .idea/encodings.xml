@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-assist" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-data" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-integrator" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-portal" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-system" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-admin-war" charset="UTF-8" />
+  </component>
+</project>

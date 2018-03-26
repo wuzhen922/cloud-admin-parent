@@ -1,0 +1,57 @@
+body, ul, ol, li, p, h1, h2, h3, h4, h5, h6, form, label, dl, dt, dd, fieldset, img {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none; }
+
+html, body {
+  font-family: "Sans-serif" !important; }
+
+a:link, a:visited, a:hover, a:active {
+  text-decoration: none !important; }
+
+.none {
+  display: none ; }
+
+.show {
+  display: block !important; }
+
+.form-group label {
+  text-align: right;
+  color: #636363 !important; }
+
+.form-control {
+  background-color: #f5f7f8 !important; }
+
+.col-md-4 {
+  width: 33.33333333% !important; }
+
+.col-md-8 {
+  width: 66.66666667% !important; }
+
+.requireValidate a, .requireValidate a:hover, .requireValidate a:active {
+  margin-bottom: 5px;
+  font-size: 12px;
+  background: #1C95E5;
+  cursor: pointer;
+  padding: 4px 7px;
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 4px; }
+
+.page-span a,.page-span a:hover,.page-span a:active,.page-span a:focus{
+  color:#1C95E5 !important;
+
+}
+
+@media(max-device-width:1920px){
+  html{
+    font-size:18px !important;
+  }
+}
+@media(max-device-width:1366px){
+  html{
+    font-size:12px !important;
+  }
+}
+/*# sourceMappingURL=init.css.map */

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DayTimer">
+
+    <select id="rankRtuByMonthTraffic" resultType="com.eyelake.cloud.admin.assist.dto.admin.RtuRankingDto">
+        SELECT
+            rtu.sn_number AS snNumber,
+            rtu.rtu_name AS rtuName,
+            ifnull(-1, traffic.month_traffic) AS monthTraffic
+        FROM
+            t_rtu_info  rtu
+        LEFT JOIN
+            (SELECT
+                 sn_number,
+                 month_traffic
+             FROM
+                 t_rtu_month rtuMonth
+             WHERE
+                 date_format (rtuMonth.month_date, '%y-%m') = date_format(now(),'%y-%m')
+            ) traffic
+        ON rtu.sn_number = traffic.sn_number
+        WHERE
+            rtu.status IN ('10','20')
+        ORDER BY
+            traffic.month_traffic DESC
+
+    </select>
+
+    <select id="rankRtuByMonthTrafficLimit5" resultType="com.eyelake.cloud.admin.assist.dto.admin.RtuRankingDto">
+        SELECT
+          rtu.sn_number AS snNumber,
+          rtu.rtu_name AS rtuName,
+          ifnull(0, traffic.month_traffic) AS monthTraffic
+        FROM
+          t_rtu_info  rtu
+        LEFT JOIN
+          (SELECT
+            sn_number,
+            month_traffic
+          FROM
+            t_rtu_month
+          WHERE
+            date_format (month_date, '%y-%m') = date_format(now(),'%y-%m')) traffic
+        ON rtu.sn_number = traffic.sn_number
+        WHERE
+          rtu.status IN ('10', '20')
+        ORDER BY
+          traffic.month_traffic DESC
+        LIMIT 5
+
+    </select>
+
+    <select id="selectIntegratorByRtuWarningStatusLimit5" resultType="com.eyelake.cloud.admin.assist.dto.admin.QueryIntegratorByRtuWarningStatusDto">
+        SELECT
+            tab1.integratorId AS integratorId,
+            integrator.company AS integratorName,
+            integrator.integrator_key AS integratorKey,
+            tab1.normal AS normalSum,
+            tab1.warning AS warningSum,
+            tab1.exhaust AS exhaustSum,
+            tab1.normal/(tab1.normal+tab1.warning+tab1.exhaust) AS normalPercentage,
+            tab1.warning/(tab1.normal+tab1.warning+tab1.exhaust)AS warningPercentage,
+            tab1.exhaust/(tab1.normal+tab1.warning+tab1.exhaust) AS exhaustPercentage,
+            tab1.normal+tab1.warning+tab1.exhaust AS rtuSum
+        FROM
+            (	SELECT
+                     tab.integratorId,
+                     SUM(CASE tab.warning_status WHEN 00 THEN 1 ELSE 0 END) normal,
+                     SUM(CASE tab.warning_status WHEN 01 THEN 1 ELSE 0 END) warning,
+                     SUM(CASE tab.warning_status WHEN 02 THEN 1 ELSE 0 END) exhaust
+                 FROM
+                     (
+                         SELECT
+                             rtu.id AS Id,
+                             rtu.sn_number AS snNumber,
+                             rtu.integrator_id AS integratorId,
+                             IFNULL(warning.warning_status, '00') AS warning_status
+
+                         FROM
+                             t_rtu_info  rtu
+                             LEFT JOIN
+                             t_rtu_warning warning
+                                 ON rtu.sn_number = warning.sn_number
+                         WHERE
+                             rtu.status IN ('10','20')) tab
+
+                 GROUP BY
+                     tab.integratorId
+            ) tab1
+            LEFT JOIN
+            t_integrator_info integrator
+                ON
+                    integrator.id = tab1.integratorId
+        WHERE
+            integrator.status IN ('10', '20')
+        ORDER BY
+            exhaustPercentage DESC, warningPercentage DESC, normalPercentage DESC, integrator.create_time DESC
+        LIMIT 6
+
+    </select>
+
+    <!-- 查询网关月流量列表-->
+    <select id="queryRtuMonthTrafficList" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuMonthDmo">
+        SELECT
+          rtuMonth.sn_number AS snNumber,
+          rtuMonth.month_traffic AS monthTraffic,
+          rtuMonth.integrator_id AS integratorId,
+          rtuMonth.month_pack_traffic AS monthPackTraffic,
+          rtuMonth.fixed_pack_name AS fixedPackName
+        FROM
+          t_rtu_month rtuMonth
+        WHERE
+          date_format (rtuMonth.month_date, '%y-%m') = date_format(now(),'%y-%m') AND rtuMonth.status IN ('10')
+
+    </select>
+
+    <!-- 查询RTU列表-->
+    <select id="queryRtuList" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto">
+        SELECT
+            rtu.id AS Id,
+            rtu.sn_number AS snNumber,
+            rtu.carrier_operator_enum AS operator,
+            rtu.create_time AS createTime,
+            rtu.status AS status,
+            rtu.owner_id AS ownerId,
+            rtu.org_name AS orgName,
+            rtu.integrator_id AS integratorId,
+            rtu.integrator_name as company,
+            rtu.last_update_time AS lastUpdateTime
+        FROM
+            t_rtu_info rtu
+        WHERE
+            rtu.status IN ('10', '20')
+
+    </select>
+
+    <!-- 根据网关月使用流量更新网关预警状态-->
+    <select id="queryRtuWarning" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto">
+        SELECT
+        rtu.sn_number AS snNumber,
+        rtu.status AS status,
+        rtu.owner_id AS ownerId,
+        rtu.org_name AS orgName,
+        rtu.integrator_id AS integratorId,
+        rtu.integrator_name as company
+        FROM
+        t_rtu_info rtu
+        LEFT JOIN
+            t_rtu_warning warning
+        ON rtu.sn_number = warning.sn_number
+        WHERE
+        rtu.status IN ('10', '20')
+
+    </select>
+
+    <!--<select id="insertRtuDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDayDmo"-->
+            <!--resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDayDmo">-->
+        <!--INSERT INTO-->
+          <!--t_rtu_day-->
+        <!--(sn_number, integrator_id, day_date, day_traffic, create_time, last_update_time, status)-->
+        <!--VALUES-->
+            <!--()-->
+        <!--SELECT-->
+        <!--rtuMonth.sn_number AS snNumber,-->
+        <!--rtuMonth.month_traffic AS monthTraffic,-->
+        <!--rtuMonth.integrator_id AS integratorId,-->
+        <!--rtuMonth.month_pack_traffic AS monthPackTraffic,-->
+        <!--rtuMonth.fixed_pack_name AS fixedPackName-->
+        <!--FROM-->
+        <!--t_rtu_month rtuMonth-->
+        <!--WHERE-->
+        <!--date_format (rtuMonth.last_update_time, '%y-%m-%d') = date_format(now(),'%y-%m-%d') AND rtuMonth.status IN ("10")-->
+
+    <!--</select>-->
+
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AdminUserMapper">
+
+	<select id="queryUserCount" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.AdminInfoDmo"
+		resultType="long">
+		select
+        count(*)
+		from
+		t_cloud_admin_info info
+		left join
+		t_cloud_admin_role admin_role
+		on info.id = admin_role.user_id
+		left join
+		t_cloud_role_info role_info
+		on admin_role.role_id = role_info.id
+		<where>
+			<if test="userName!=null">
+				and user_name LIKE CONCAT(CONCAT('%', #{userName}), '%')
+			</if>
+			<if test="status != null">
+				and (status ="10" or status="20")
+			</if>
+			and role_info.id!=1
+		</where>
+	</select>
+
+	<select id="queryUserList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.AdminInfoDmo"
+		resultType="com.eyelake.cloud.admin.assist.dto.admin.AdminInfoDto">
+		select
+        info.id as id,
+		info.user_name as userName,
+		info.real_name as realName,
+		info.phone as phone,
+		info.create_time as createTime,
+		info.status as status,
+		info.e_mail as email,
+		info.user_desc as userDesc,
+        role_info.id as roleId,
+		role_info.role_name as roleName
+		from
+		t_cloud_admin_info info
+		left join
+		t_cloud_admin_role admin_role
+		on info.id = admin_role.user_id
+		left join
+		t_cloud_role_info role_info
+		on admin_role.role_id = role_info.id
+		<where>
+			<if test="userName!=null">
+				and user_name LIKE CONCAT(CONCAT('%', #{userName}), '%')
+			</if>
+			<if test="status != null">
+				and (status ="10" or status="20")
+			</if>
+			and role_info.id!=1
+		</where>
+		order by info.create_time DESC
+	</select>
+
+	<select id="queryExistingUser" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.AdminInfoDmo"
+		resultType="com.eyelake.cloud.admin.assist.dmo.admin.AdminInfoDmo">
+		select
+        info.id as id,
+		info.user_name as userName,
+		info.password as password,
+		info.phone as phone,
+		info.e_mail as email,
+		info.user_desc as userDesc,
+		info.real_name as realName,
+		info.create_time as createTime,
+		info.last_update_time as lastUpdateTime,
+		info.login_fail_count as loginFailCount,
+		info.status as status
+		from
+		t_cloud_admin_info info
+		<where>
+			<if test="userName!=null">
+				and user_name=#{userName}
+			</if>
+                and (status ="10" or status="20")
+		</where>
+	</select>
+</mapper>

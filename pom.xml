@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.eyelake.framework</groupId>
+        <artifactId>iot-parent</artifactId>
+        <version>2.0.0</version>
+    </parent>
+
+    <groupId>com.eyelake.link</groupId>
+    <artifactId>cloud-admin-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <modules>
+        <module>cloud-admin-integrator</module>
+        <module>cloud-admin-assist</module>
+        <module>cloud-admin-portal</module>
+        <module>cloud-admin-war</module>
+        <module>cloud-admin-common</module>
+        <module>cloud-admin-system</module>
+        <module>cloud-admin-data</module>
+    </modules>
+
+    <properties>
+        <cloud-admin-version>1.0.0-SNAPSHOT</cloud-admin-version>
+        <iot-framework-version>2.0.0</iot-framework-version>
+        <spring-version>3.1.1.RELEASE</spring-version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- framework begin -->
+            <dependency>
+                <groupId>com.eyelake.framework</groupId>
+                <artifactId>iot-framework-lang</artifactId>
+                <version>${iot-framework-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyelake.framework</groupId>
+                <artifactId>iot-framework-dal</artifactId>
+                <version>${iot-framework-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyelake.framework</groupId>
+                <artifactId>iot-framework-cache</artifactId>
+                <version>${iot-framework-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyelake.framework</groupId>
+                <artifactId>iot-framework-session</artifactId>
+                <version>${iot-framework-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyelake.framework</groupId>
+                <artifactId>iot-framework-web</artifactId>
+                <version>${iot-framework-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.eyelake.framework</groupId>
+                <artifactId>iot-framework-core</artifactId>
+                <version>${iot-framework-version}</version>
+            </dependency>
+
+            <!-- framework end -->
+
+
+
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>

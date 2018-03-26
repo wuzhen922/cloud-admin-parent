@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AdminMenuMapper">
+
+	<select id="queryMenuCount" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.MenuInfoDmo"
+		resultType="long">
+        select
+        count(*)
+        from
+        t_cloud_menu_info menu
+        left join
+        t_cloud_menu_info partent_menu
+        on
+        partent_menu.id = menu.parent_id
+        <where>
+            <if test="null != status">
+                and menu.status = #{status}
+            </if>
+            <if test="null != menuLevel">
+                and menu.menu_level = #{menuLevel}
+            </if>
+            <if test="null != parentId">
+                and menu.parent_id = #{parentId}
+            </if>
+        </where>
+	</select>
+
+	<select id="queryMenuList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.MenuInfoDmo"
+		resultType="com.eyelake.cloud.admin.assist.dto.admin.AdminMenuDto">
+		select
+            menu.id as id,
+            menu.menu_name as menuName,
+            menu.menu_level as menuLevel,
+            menu.sort as sort,
+            menu.parent_id as parentId,
+            menu.menu_url as menuUrl,
+            menu.menu_icon as menuIcon,
+            partent_menu.menu_name as parentMenuName
+		from
+		    t_cloud_menu_info menu
+		join
+		    t_cloud_menu_info partent_menu
+		on
+		    partent_menu.id = menu.parent_id
+        <where>
+            <if test="null != status">
+                and menu.status = #{status}
+            </if>
+            <if test="null != menuLevel">
+                and menu.menu_level = #{menuLevel}
+            </if>
+            <if test="null != parentId">
+                and menu.parent_id = #{parentId}
+            </if>
+        </where>
+		order by menu.id desc
+	</select>
+
+	<select id="queryMenuListByUser" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryMenuListDto"
+		resultType="com.eyelake.cloud.admin.assist.dmo.admin.MenuInfoDmo">
+		select
+            menu.id as id,
+            menu.menu_name as menuName,
+            menu.menu_url as menuUrl,
+            menu.menu_level as menuLevel,
+            menu.parent_id as parentId,
+            menu.create_time as createTime,
+            menu.last_update_time as lastUpdateTime,
+            menu.status as status,
+            menu.menu_icon as menuIcon,
+            menu.sort as sort
+		from
+		    t_cloud_menu_info menu
+		join
+		    t_cloud_role_menu role_menu
+		on
+		    role_menu.menu_id = menu.id
+		join
+		    t_cloud_admin_role role
+		on
+		    role.role_id = role_menu.role_id
+		<where>
+            <if test="null != userId">
+                and role.user_id = #{userId}
+            </if>
+            <if test="null != menuLevel">
+                and menu.menu_level = #{menuLevel}
+            </if>
+            <if test="null != parentId">
+                and menu.parent_id = #{parentId}
+            </if>
+            <if test="null != status">
+                and menu.status = #{status}
+            </if>
+        </where>
+        order by menu.sort
+	</select>
+
+    <select id="SubMenuCount" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.MenuInfoDmo"
+            resultType="long">
+        select
+            count(*)
+        from
+            t_cloud_menu_info
+        <where>
+            <if test="null != parentId">
+                and parent_id=#{parentId}
+            </if>
+            <if test="null != status">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+</mapper>

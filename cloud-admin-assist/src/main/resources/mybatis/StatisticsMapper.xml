@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="StatisticsMapper">
+
+    <!--查所有业主企业-->
+    <select id="queryOwnerList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerDmo">
+        select
+        id as id ,
+        integrator_id as integratorId,
+        org_name as orgName
+        from t_owner_org
+        where status in ('10','20')
+    </select>
+
+    <!--查所有集成商-->
+    <select id="queryIntegratorList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        select
+        id as id ,
+        company as company
+        from t_integrator_info
+        where status in ('10','20')
+    </select>
+
+
+    <!--日流量统计，业主企业-->
+    <select id="statisticsOwnerDayTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.data.dto.StatisticsDto">
+        SELECT
+        SUM(rtuday.day_traffic) as usedTraffic
+        FROM t_rtu_info rtu
+        JOIN t_rtu_day rtuday
+        ON rtu.sn_number = rtuday.sn_number
+        <where>
+            <if test="integratorId != null and integratorId != ''">
+                and rtu.integrator_id= #{integratorId}
+                and rtuday.integrator_id = #{integratorId}
+            </if>
+            and rtu.owner_id = #{ownerId}
+            and DATE(rtuday.day_date)= DATE (#{statisticsDate})
+        </where>
+    </select>
+
+    <!--日流量统计，集成商、云平台-->
+    <select id="statisticsDayTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.data.dto.StatisticsDto">
+        SELECT
+        SUM(day_traffic) as usedTraffic
+        FROM t_rtu_day
+        <where>
+            <if test="integratorId != null and integratorId != ''">
+                and integrator_id= #{integratorId}
+            </if>
+            and DATE(day_date)= DATE (#{statisticsDate})
+        </where>
+    </select>
+
+    <!--月流量统计，业主企业-->
+    <select id="statisticsOwnerMonthTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.data.dto.StatisticsDto">
+        SELECT
+        SUM(rtumonth.month_traffic) as usedTraffic,
+        SUM(rtumonth.month_pack_traffic) as packTraffic
+        FROM t_rtu_info rtu
+        JOIN t_rtu_month rtumonth
+        ON rtu.sn_number = rtumonth.sn_number
+        <where>
+            <if test="integratorId != null and integratorId != ''">
+                and rtu.integrator_id= #{integratorId}
+                and rtumonth.integrator_id = #{integratorId}
+            </if>
+            and rtu.owner_id = #{ownerId}
+            and DATE_FORMAT(rtumonth.month_date,'%Y-%m')= DATE_FORMAT(#{statisticsDate},'%Y-%m')
+        </where>
+    </select>
+
+
+    <!--月流量统计，集成商、云平台-->
+    <select id="statisticsMonthTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.data.dto.StatisticsDto">
+        SELECT
+        SUM(month_traffic) as usedTraffic,
+        SUM(month_pack_traffic) as packTraffic
+        FROM t_rtu_month
+        <where>
+            <if test="integratorId != null and integratorId != ''">
+                and integrator_id = #{integratorId}
+            </if>
+            and DATE_FORMAT(month_date,'%Y-%m')= DATE_FORMAT(#{statisticsDate},'%Y-%m')
+        </where>
+    </select>
+
+
+    <!--查业主月流量-->
+    <select id="queryOwnerMonthTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerMonthDmo">
+        SELECT
+          id as id,
+          month_traffic as monthTraffic,
+          month_pack_traffic as monthPackTraffic
+        FROM t_owner_month
+        WHERE owner_id = #{ownerId} and DATE_FORMAT(month_date,'%Y-%m')= DATE_FORMAT(#{statisticsDate},'%Y-%m')
+    </select>
+
+
+    <!--查业主企业日流量-->
+    <select id="queryOwnerDayTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerDayDmo">
+        SELECT
+        id as id,
+        day_traffic as dayTraffic,
+        day_date as dayDate
+        FROM t_owner_day
+        WHERE owner_id = #{ownerId} and DATE(day_date)= DATE(#{statisticsDate})
+    </select>
+
+    <!--查集成商月流量-->
+    <select id="queryIntegratorMonthTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorMonthDmo">
+        SELECT
+        id as id,
+        month_traffic as monthTraffic,
+        month_pack_traffic as monthPackTraffic
+        FROM t_integrator_month
+        WHERE integrator_id = #{integratorId} and DATE_FORMAT(month_date,'%Y-%m')= DATE_FORMAT(#{statisticsDate},'%Y-%m')
+    </select>
+
+    <!--查集成商日流量-->
+    <select id="queryIntegratorDayTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDayDmo">
+        SELECT
+        id as id,
+        day_traffic as dayTraffic,
+        day_date as dayDate
+        FROM t_integrator_day
+        WHERE integrator_id = #{integratorId} and DATE(day_date)= DATE(#{statisticsDate})
+    </select>
+
+    <!--查云平台日流量-->
+    <select id="querySystemDayTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.SystemDayDmo">
+        SELECT
+        id as id,
+        day_traffic as dayTraffic,
+        day_date as dayDate
+        FROM t_system_day
+        WHERE DATE(day_date)= DATE(#{statisticsDate})
+    </select>
+
+    <!--查云平台月流量-->
+    <select id="querySystemMonthTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.SystemMonthDmo">
+        SELECT
+        id as id,
+        month_traffic as monthTraffic,
+        month_pack_traffic as monthPackTraffic
+        FROM t_system_month
+        WHERE DATE_FORMAT(month_date,'%Y-%m')= DATE_FORMAT(#{statisticsDate},'%Y-%m')
+    </select>
+
+</mapper>

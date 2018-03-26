@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RealTimeTrafficMapper">
+
+    <select id="queryIntegratorNodes" parameterType="java.util.HashMap"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.TreeNodeDto">
+        SELECT
+            CONCAT('I', id) AS id,
+            company         AS title,
+            'P0'            AS parentId
+        FROM t_integrator_info
+        WHERE status IN ('10', '20')
+    </select>
+
+    <select id="queryRtuNodes" parameterType="java.util.HashMap"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.TreeNodeDto">
+        SELECT
+            CONCAT('R', tri.id)            AS id,
+            tri.rtu_name                   AS title,
+            CONCAT('I', tri.integrator_id) AS parentId,
+            tri.sn_number                  AS snNumber,
+            trw.warning_status as status
+        FROM t_rtu_info tri
+            left JOIN
+            t_rtu_warning trw
+            ON tri.sn_number=trw.sn_number
+        WHERE tri.integrator_id = #{integratorId} AND tri.status IN ('10', '20')and (trw.status is null or trw.status='10')
+    </select>
+    <select id="queryRtuDayTrafficUsage" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDayDmo"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.DayTrafficDto">
+        SELECT
+            day_traffic as dayTraffic,
+            day_date as dayDate
+        FROM t_rtu_day
+        WHERE sn_number = #{snNumber} AND status =#{status} and DATE (day_date) &gt;=DATE (DATE_ADD(curdate(),interval -day(curdate())+1 day))
+              and DATE (day_date)	&lt;DATE (curdate())
+        ORDER BY day_date ASC
+    </select>
+    <select id="queryRtuDayTrafficDay" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDayDmo"
+            resultType="java.lang.Integer">
+        SELECT  DISTINCT
+            day(day_date)
+        FROM t_rtu_day
+        WHERE sn_number = #{snNumber} AND status =#{status} and DATE (day_date) &gt;=DATE (DATE_ADD(curdate(),interval -day(curdate())+1 day))
+              and DATE (day_date)	&lt;DATE (curdate())
+        ORDER BY day_date ASC
+    </select>
+    <select id="queryIntegratorDayTrafficUsage" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDayDmo"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.DayTrafficDto">
+        SELECT
+            day_traffic as dayTraffic,
+            day_date as dayDate
+        FROM t_integrator_day
+        WHERE integrator_id = #{integratorId} AND status =#{status} and DATE (day_date) &gt;=DATE (DATE_ADD(curdate(),interval -day(curdate())+1 day))
+              and DATE (day_date)	&lt;DATE (curdate())
+        ORDER BY day_date ASC
+    </select>
+    <select id="queryIntegratorDayTrafficDay" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDayDmo"
+            resultType="java.lang.Integer">
+        SELECT  DISTINCT
+            day(day_date)
+        FROM t_integrator_day
+        WHERE integrator_id = #{integratorId} AND status =#{status} and DATE (day_date) &gt;=DATE (DATE_ADD(curdate(),interval -day(curdate())+1 day))
+              and DATE (day_date)	&lt;DATE (curdate())
+        ORDER BY day_date ASC
+    </select>
+    <select id="querySystemDayTrafficUsage" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.SystemDayDmo"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.DayTrafficDto">
+        SELECT
+            day_traffic as dayTraffic,
+            day_date as dayDate
+        FROM t_system_day
+        WHERE status =#{status} and DATE (day_date) &gt;=DATE (DATE_ADD(curdate(),interval -day(curdate())+1 day))
+              and DATE (day_date)	&lt;DATE (curdate())
+        ORDER BY day_date ASC
+    </select>
+    <select id="querySystemDayTrafficDay" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.SystemDayDmo"
+            resultType="java.lang.Integer">
+        SELECT  DISTINCT
+            day(day_date)
+        FROM t_system_day
+        WHERE status =#{status} and DATE (day_date) &gt;=DATE (DATE_ADD(curdate(),interval -day(curdate())+1 day))
+              and DATE (day_date)	&lt;DATE (curdate())
+        ORDER BY day_date ASC
+    </select>
+    <select id="queryIntegratorPackageNumberMapList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuMonthDmo"
+            resultType="java.util.HashMap">
+        SELECT
+            month_pack_traffic as packTraffic,
+            count(id) as packNumber
+        FROM t_rtu_month
+        WHERE integrator_id=#{integratorId} and DATE_FORMAT(month_date,'%Y-%m')=DATE_FORMAT(#{monthDate},'%Y-%m') and status =#{status} and month_pack_traffic is not NULL and <![CDATA[month_pack_traffic!='' ]]>
+        GROUP BY month_pack_traffic
+    </select>
+    <select id="querySystemPackageNumberMapList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuMonthDmo"
+            resultType="java.util.HashMap">
+        SELECT
+            month_pack_traffic as packTraffic,
+            count(id) as packNumber
+        FROM t_rtu_month
+        WHERE DATE_FORMAT(month_date,'%Y-%m')=DATE_FORMAT(#{monthDate},'%Y-%m') and status =#{status} and month_pack_traffic is not NULL and <![CDATA[month_pack_traffic!='' ]]>
+        GROUP BY month_pack_traffic
+    </select>
+
+    <select id="queryRtuMonth" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuMonthDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuMonthDmo">
+        SELECT
+        id as id,
+        sn_number as snNumber,
+        integrator_id as integratorId,
+        month_date as monthDate,
+        month_traffic as monthTraffic,
+        month_pack_traffic as monthPackTraffic,
+        fixed_pack_name as fixedPackName,
+        create_time as createTime,
+        last_update_time as lastUpdateTime,
+        status as status
+        FROM t_rtu_month
+
+        <where>
+            <if test="null != monthDate and '' != monthDate">
+                and DATE_FORMAT(month_date,'%Y-%m')=DATE_FORMAT(#{monthDate},'%Y-%m')
+            </if>
+            <if test="null != snNumber and '' != snNumber">
+                and sn_number = #{snNumber}
+            </if>
+            and status =#{status}
+        </where>
+
+    </select>
+
+    <select id="queryIntegratorMonth" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorMonthDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorMonthDmo">
+        SELECT
+        id as id,
+        integrator_id as integratorId,
+        month_date as monthDate,
+        month_traffic as monthTraffic,
+        month_pack_traffic as monthPackTraffic,
+        create_time as createTime,
+        last_update_time as lastUpdateTime,
+        status as status
+        FROM t_integrator_month
+
+        <where>
+            <if test="null != monthDate and '' != monthDate">
+                and DATE_FORMAT(month_date,'%Y-%m')=DATE_FORMAT(#{monthDate},'%Y-%m')
+            </if>
+            <if test="null != integratorId and '' != integratorId">
+                and integrator_id = #{integratorId}
+            </if>
+            and status =#{status}
+        </where>
+
+    </select>
+
+    <select id="querySystemMonth" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.SystemMonthDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.SystemMonthDmo">
+        SELECT
+        id as id,
+        month_date as monthDate,
+        month_traffic as monthTraffic,
+        month_pack_traffic as monthPackTraffic,
+        create_time as createTime,
+        last_update_time as lastUpdateTime,
+        status as status
+        FROM t_system_month
+
+        <where>
+            <if test="null != monthDate and '' != monthDate">
+                and DATE_FORMAT(month_date,'%Y-%m')=DATE_FORMAT(#{monthDate},'%Y-%m')
+            </if>
+            and status =#{status}
+        </where>
+
+    </select>
+    <!-- 按照SN码或者机器码查询RTU列表-->
+    <select id="queryRtuBySomething" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo">
+        SELECT
+        rtu.id AS id,
+        rtu.rtu_name AS rtuName,
+        rtu.rtu_trans_type AS rtuTransType,
+        rtu.rtu_access_type AS rtuAccessType,
+        rtu.sn_number AS snNumber,
+        rtu.machine_code as machineCode,
+        rtu.integrator_id as integratorId,
+        rtu.integrator_name as integratorName,
+        rtu.carrier_operator_enum as carrierOperatorEnum,
+        rtu.status AS status,
+        rtu.create_time AS createTime,
+        rtu.last_update_time AS lastUpdateTime
+        FROM
+        t_rtu_info rtu
+
+        <where>
+            <if test="null != machineCode and '' != machineCode">
+                and rtu.machine_code = #{machineCode}
+            </if>
+            <if test="null != snNumber and '' != snNumber">
+                and rtu.sn_number = #{snNumber}
+            </if>
+            AND rtu.status in ('10','20')
+        </where>
+        ORDER BY rtu.create_time desc
+    </select>
+
+    <!--月流量统计，业主企业、集成商、云平台-->
+    <select id="statisticsMonthTraffic" parameterType="com.eyelake.cloud.admin.data.dto.StatisticsDto"
+            resultType="com.eyelake.cloud.admin.data.dto.StatisticsDto">
+        SELECT
+        SUM(rtumonth.month_traffic) as usedTraffic,
+        SUM(rtumonth.month_pack_traffic) as packTraffic
+        FROM t_rtu_info rtu
+        LEFT JOIN t_rtu_month rtumonth
+        ON rtu.sn_number = rtumonth.sn_number
+        <where>
+            <if test="ownerId != null and ownerId != ''">
+                and rtu.owner_id = #{ownerId}
+            </if>
+            <if test="integratorId != null and integratorId != ''">
+                and rtu.integrator_id= #{integratorId}
+            </if>
+            and rtu.status in ('10','20') and rtumonth.status = '10' and DATE_FORMAT(rtumonth.month_date,'%Y-%m')= DATE_FORMAT(#{statisticsDate},'%Y-%m')
+        </where>
+    </select>
+
+
+    <!--查所有业主企业-->
+    <select id="queryOwnerList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerDmo">
+        select
+        id as id ,
+        integrator_id as integratorId,
+        org_name as orgName
+        from t_owner_org
+        where status in ('10','20')
+    </select>
+
+    <!--查所有集成商-->
+    <select id="queryIntegratorList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        select
+        id as id ,
+        company as company
+        from t_integrator_info
+        where status in ('10','20')
+    </select>
+
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MonthTaskMapper">
+
+    <select id="queryRtuLastMonthYearTraffic" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuYearDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuYearDmo">
+        SELECT
+            integrator_id                           AS integratorId,
+            sn_number                               AS snNumber,
+            SUM(month_traffic)                      AS yearTraffic
+        FROM t_rtu_month
+        WHERE
+            sn_number = #{snNumber} AND
+            month(month_date) &lt;= month(date_sub(NOW(), INTERVAL 1 MONTH)) AND
+            year(month_date) = year(date_sub(NOW(), INTERVAL 1 MONTH)) AND status =#{status}
+
+    </select>
+    <select id="queryOwnerLastMonthYearTraffic" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerYearDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.OwnerYearDmo">
+        SELECT
+            integrator_id                           AS integratorId,
+            owner_id                              AS ownerId,
+            SUM(month_traffic)                      AS yearTraffic
+        FROM t_owner_month
+        WHERE
+            owner_id = #{ownerId} AND
+            month(month_date) &lt;= month(date_sub(NOW(), INTERVAL 1 MONTH)) AND
+            year(month_date) = year(date_sub(NOW(), INTERVAL 1 MONTH)) AND status =#{status}
+
+    </select>
+    <select id="queryIntegratorLastMonthYearTraffic" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorYearDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorYearDmo">
+        SELECT
+            integrator_id                           AS integratorId,
+            SUM(month_traffic)                      AS yearTraffic
+        FROM t_integrator_month
+        WHERE
+            integrator_id = #{integratorId} AND
+            month(month_date) &lt;= month(date_sub(NOW(), INTERVAL 1 MONTH)) AND
+            year(month_date) = year(date_sub(NOW(), INTERVAL 1 MONTH)) AND status =#{status}
+
+    </select>
+
+    <select id="querySystemLastMonthYearTraffic" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.SystemYearDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.SystemYearDmo">
+        SELECT
+            SUM(month_traffic)                      AS yearTraffic
+        FROM t_system_month
+        WHERE
+            month(month_date) &lt;= month(date_sub(NOW(), INTERVAL 1 MONTH)) AND
+            year(month_date) = year(date_sub(NOW(), INTERVAL 1 MONTH)) AND status =#{status}
+    </select>
+
+
+
+</mapper>

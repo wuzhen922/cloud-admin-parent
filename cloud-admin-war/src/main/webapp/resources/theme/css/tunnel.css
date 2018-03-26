@@ -1,0 +1,57 @@
+.table>thead:first-child>tr:first-child>th {
+	max-width: 100px;
+	min-width: 50px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 8px 0px;
+}
+
+.table td {
+	max-width: 100px;
+	min-width: 50px;
+	padding: 8px 0px;
+}
+
+.cutWord {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.add-tunnelTable {
+	height: 200px;
+	width: 100%;
+	border: 1px solid #dddddd;
+	margin: 90px 0px 10px 0px;
+	overflow-y: auto
+}
+
+.tunnelTable {
+	height: 200px;
+	overflow-y: auto;
+	margin: 10px 75px;
+	border: 1px solid #dddddd;
+	width: 75%;
+}
+
+.tunnelTable::-webkit-scrollbar {
+	width: 5px;
+	height: 50%;
+}
+
+#tunnel-Html {
+	height: 200px;
+	overflow-y: auto;
+}
+
+#tunnel-Html::-webkit-scrollbar {
+	width: 5px;
+	height: 20px;
+}
+
+.td-sensornumber{
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

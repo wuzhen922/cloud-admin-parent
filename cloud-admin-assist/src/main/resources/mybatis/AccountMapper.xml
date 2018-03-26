@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AccountMapper">
+
+    <!--查云平台月流量（年统计）-->
+    <select id="querySystemMonthTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.YearStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.YearStatisticsDto">
+        select
+        DATE_FORMAT(month_date,'%m') as queryMonth,
+        if(isnull(month_traffic),'0',month_traffic ) as monthTraffic,
+        if(isnull(month_pack_traffic),'0',month_pack_traffic ) as monthPackTraffic
+        From t_system_month
+        Where DATE_FORMAT(month_date,'%Y') = #{accountYear}
+        GROUP BY DATE_FORMAT(month_date,'%m')
+        ORDER BY DATE_FORMAT(month_date,'%m')
+    </select>
+
+    <!--查云平台（月统计）-->
+    <select id="querySystemDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto">
+        select
+        DATE_FORMAT(day_date,'%d') as queryDay,
+        if(isnull(day_traffic),'0',day_traffic ) as dayTraffic
+        From t_system_day
+        Where DATE_FORMAT(day_date,'%Y-%m') = #{accountYearMonth}
+        GROUP BY DATE_FORMAT(day_date,'%d')
+        ORDER BY DATE_FORMAT(day_date,'%d')
+    </select>
+
+    <!--查集成商月流量（年统计）-->
+    <select id="queryIntegratorMonthTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.YearStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.YearStatisticsDto">
+        select
+        DATE_FORMAT(month_date,'%m') as queryMonth,
+        if(isnull(month_traffic),'0',month_traffic ) as monthTraffic,
+        if(isnull(month_pack_traffic),'0',month_pack_traffic ) as monthPackTraffic
+        From t_integrator_month
+        Where integrator_id = #{integratorId} and DATE_FORMAT(month_date,'%Y') = #{accountYear}
+        GROUP BY DATE_FORMAT(month_date,'%m')
+        ORDER BY DATE_FORMAT(month_date,'%m')
+    </select>
+
+    <!--查集成商日流量（月统计）-->
+    <select id="queryIntegratorDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto">
+        select
+        DATE_FORMAT(day_date,'%d') as queryDay,
+        if(isnull(day_traffic),'0',day_traffic ) as dayTraffic
+        From t_integrator_day
+        Where integrator_id = #{integratorId} and DATE_FORMAT(day_date,'%Y-%m') = #{accountYearMonth}
+        GROUP BY DATE_FORMAT(day_date,'%d')
+        ORDER BY DATE_FORMAT(day_date,'%d')
+    </select>
+
+
+
+    <!--查业rtu月流量（年统计）-->
+    <select id="queryRtuMonthTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.YearStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.YearStatisticsDto">
+        select
+        sn_number as snNumber,
+        DATE_FORMAT(month_date,'%m') as queryMonth,
+        if(isnull(month_traffic),'0',month_traffic ) as monthTraffic,
+        if(isnull(month_pack_traffic),'0',month_pack_traffic ) as monthPackTraffic
+        From t_rtu_month
+        Where integrator_id = #{integratorId} and sn_number = #{snNumber} and DATE_FORMAT(month_date,'%Y') = #{accountYear}
+        GROUP BY DATE_FORMAT(month_date,'%m')
+        ORDER BY DATE_FORMAT(month_date,'%m')
+    </select>
+
+    <!--查业rtu日流量（月统计）-->
+    <select id="queryRtuDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto">
+        select
+        DATE_FORMAT(day_date,'%d') as queryDay,
+        if(isnull(day_traffic),'0',day_traffic ) as dayTraffic
+        From t_rtu_day
+        Where integrator_id = #{integratorId} and  sn_number = #{snNumber} and DATE_FORMAT(day_date,'%Y-%m') = #{accountYearMonth}
+        GROUP BY DATE_FORMAT(day_date,'%d')
+        ORDER BY DATE_FORMAT(day_date,'%d')
+    </select>
+
+
+    <!--查业rtu日流量排名，前5名-->
+    <select id="queryRtuDayTrafficRank" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto">
+        select
+        DATE_FORMAT(day_date,'%d') as queryDay,
+        if(isnull(day_traffic),'0',day_traffic ) as dayTraffic
+        From t_rtu_day
+        Where integrator_id = #{integratorId} and  sn_number = #{snNumber} and DATE_FORMAT(day_date,'%Y-%m') = #{accountYearMonth}
+        GROUP BY DATE_FORMAT(day_date,'%d')
+        ORDER BY day_traffic DESC
+        LIMIT 5
+    </select>
+
+
+
+    <!--批量插入云平台月流量表信息-->
+    <insert id="batchInsertSystemMonthTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.BatchInsertStatisticsDto">
+        INSERT INTO
+        t_system_month(month_date,month_traffic,month_pack_traffic,create_time,last_update_time,status)
+        VALUES
+        <foreach item="item" collection="monthDataList" separator="," index="index">
+            (#{item.monthDate},#{item.monthTraffic},#{item.monthPackTraffic},#{item.createTime},#{item.lastUpdateTime},#{item.status})
+        </foreach>
+    </insert>
+
+
+    <!--批量插入云平台日流量表信息-->
+    <insert id="batchInsertSystemDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.BatchInsertStatisticsDto">
+        INSERT INTO
+        t_system_day(day_date,day_traffic,create_time,last_update_time,status)
+        VALUES
+        <foreach item="item" collection="dayDataList" separator="," index="index">
+            (#{item.dayDate},#{item.dayTraffic},#{item.createTime},#{item.lastUpdateTime},#{item.status})
+        </foreach>
+    </insert>
+
+    <!--批量插入集成商月流量表信息-->
+    <insert id="batchInsertIntegratorMonthTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.BatchInsertStatisticsDto">
+        INSERT INTO
+        t_integrator_month(integrator_id,month_date,month_traffic,month_pack_traffic,create_time,last_update_time,status)
+        VALUES
+        <foreach item="item" collection="monthDataList" separator="," index="index">
+            (#{item.integratorId},#{item.monthDate},#{item.monthTraffic},#{item.monthPackTraffic},#{item.createTime},#{item.lastUpdateTime},#{item.status})
+        </foreach>
+    </insert>
+
+    <!--批量插入集成商日流量表信息-->
+    <insert id="batchInsertIntegratorDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.BatchInsertStatisticsDto">
+        INSERT INTO
+        t_integrator_day(integrator_id,day_date,day_traffic,create_time,last_update_time,status)
+        VALUES
+        <foreach item="item" collection="dayDataList" separator="," index="index">
+            (#{item.integratorId},#{item.dayDate},#{item.dayTraffic},#{item.createTime},#{item.lastUpdateTime},#{item.status})
+        </foreach>
+    </insert>
+
+
+    <!--批量插入rtu月流量表信息-->
+    <insert id="batchInsertRtuMonthTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.BatchInsertStatisticsDto">
+        INSERT INTO
+        t_rtu_month(integrator_id,sn_number,month_date,month_traffic,month_pack_traffic,create_time,last_update_time,status)
+        VALUES
+        <foreach item="item" collection="monthDataList" separator="," index="index">
+            (#{item.integratorId},#{item.snNumber},#{item.monthDate},#{item.monthTraffic},#{item.monthPackTraffic},#{item.createTime},#{item.lastUpdateTime},#{item.status})
+        </foreach>
+    </insert>
+
+
+    <!--批量插入rtu日流量表信息-->
+    <insert id="batchInsertRtuDayTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.BatchInsertStatisticsDto">
+        INSERT INTO
+        t_rtu_day(integrator_id,sn_number,day_date,day_traffic,create_time,last_update_time,status)
+        VALUES
+        <foreach item="item" collection="dayDataList" separator="," index="index">
+            (#{item.integratorId},#{item.snNumber},#{item.dayDate},#{item.dayTraffic},#{item.createTime},#{item.lastUpdateTime},#{item.status})
+        </foreach>
+    </insert>
+
+    <!--查rtu月流量,集成商,云平台rtu月排名-->
+    <select id="systemRtuMonthRank" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.RtuMonthRankDto">
+       SELECT
+        rtu.rtu_name as rtuName,
+        rtu.sn_number as snNumber,
+        rtumonth.month_traffic as rtuMonthTraffic
+       FROM t_rtu_info rtu
+       JOIN t_rtu_month rtumonth
+       ON rtu.sn_number = rtumonth.sn_number
+       <where>
+           <if test="integratorId != null and integratorId != ''">
+               and rtu.integrator_id = #{integratorId}
+               and rtumonth.integrator_id = #{integratorId}
+           </if>
+            and rtumonth.status = '10' and DATE_FORMAT(rtumonth.month_date,'%Y-%m')= #{accountYearMonth}
+       </where>
+        GROUP BY rtu.sn_number
+        ORDER BY rtumonth.month_traffic DESC
+       LIMIT 5
+    </select>
+
+
+    <!--月统计，云平台月使用总流量及套餐总流量-->
+    <select id="systemMonthPackTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorMonthDmo">
+        SELECT
+        if(isnull(month_traffic),'0',month_traffic ) as monthTraffic,
+        if(isnull(month_pack_traffic),'0',month_pack_traffic ) as monthPackTraffic
+        FROM t_system_month
+        WHERE DATE_FORMAT(month_date,'%Y-%m')= #{accountYearMonth}
+        GROUP BY DATE_FORMAT(month_date,'%Y-%m')
+    </select>
+
+    <!--月统计，集成商月使用总流量及套餐总流量-->
+    <select id="integratorMonthPackTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorMonthDmo">
+        SELECT
+        if(isnull(month_traffic),'0',month_traffic ) as monthTraffic,
+        if(isnull(month_pack_traffic),'0',month_pack_traffic ) as monthPackTraffic
+        FROM t_integrator_month
+        WHERE integrator_id= #{integratorId} and DATE_FORMAT(month_date,'%Y-%m')= #{accountYearMonth}
+        GROUP BY DATE_FORMAT(month_date,'%Y-%m')
+    </select>
+
+
+
+
+    <!--月统计，rtu月使用总流量及套餐总流量-->
+    <select id="rtuMonthPackTraffic" parameterType="com.eyelake.cloud.admin.assist.dto.account.MonthStatisticsDto"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuMonthDmo">
+        SELECT
+        if(isnull(month_traffic),'0',month_traffic ) as monthTraffic,
+        if(isnull(month_pack_traffic),'0',month_pack_traffic ) as monthPackTraffic
+        FROM t_rtu_month
+        WHERE integrator_id= #{integratorId} and sn_number = #{snNumber} and DATE_FORMAT(month_date,'%Y-%m')= #{accountYearMonth}
+        GROUP BY DATE_FORMAT(month_date,'%Y-%m')
+    </select>
+
+    <!--根据rtu 查所属集成商-->
+    <select id="queryIntegratorByRtu" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo">
+        SELECT
+        integrator_id as integratorId
+        FROM t_rtu_info
+        WHERE sn_number = #{snNumber} and status in ('10','20')
+    </select>
+
+</mapper>

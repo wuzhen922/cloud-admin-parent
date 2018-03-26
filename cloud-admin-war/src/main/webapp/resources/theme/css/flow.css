@@ -1,0 +1,413 @@
+.sencondContainer .thirdContainer{
+    padding:0;
+    min-width: 1090px;
+    background:#f1f2ff
+}
+.realTimeTable{
+
+    padding: 2.5% 2.5%;
+    border: 1px solid #f7f4f4;
+    background-color: #fff;
+    overflow: auto;
+    margin-bottom: 20px;
+    box-shadow: 3px 1px 4px 1px #9d9a9a66;
+}
+.greenTd{
+    color:green !important;
+}
+.redTd{
+    color:red !important;
+}
+.yellowTd{
+    color:#c0c012 !important
+}
+
+.leftbarTable {
+    width: 49%;
+    display: inline-block;
+    float: left;
+    overflow: hidden;
+    height:220px;
+    height:18rem;
+    margin-bottom: 0;
+}
+.rightbarTable {
+    width: 49%;
+    display: inline-block;
+    float: right;
+    height:220px;
+    height:18rem;
+    margin-bottom: 0;
+
+}
+.barTable{
+    height:230px;
+   height: 19rem;
+
+}
+
+.realDataFlow .realTimeTable.barTable{
+    padding: 15px 2%;
+}
+#realDataBarEchart3{
+
+    height: 100%;
+}
+
+.thirdMenu{
+    overflow: auto;
+    position: absolute;
+    color: #666666;
+    width: 190px;
+    width: 15.8rem;
+    padding-top: 30px;
+    text-align: center;
+    border-right: 1px solid #ececef;
+    background: #ffffff;
+    font-size: 16px;
+   /* height: 100%;*/
+}
+.lastContainer{
+    padding: 0 0 0 2%;
+    padding-left: 200px;
+    padding-left:16.67rem;
+    width: 100%
+}
+.lastContainer>p,.flowWarning>p{
+    height: 34px;
+    line-height: 34px;
+    font-weight: 600;
+    font-size: 14px;
+    padding-left: 8px;
+    border-bottom: 1px solid #E4E8F0;
+    color: #676a6c;
+}
+.totalChoice>span{
+    background: #fff;
+    color: #556073;
+    border-radius: 0;
+    font-size: 14px;
+
+}
+.totalChoice>span:first-child{
+
+    margin-right: 20px;
+
+}
+
+.totalChoice>span.active{
+    background: #50B1ED;
+    color:#fff;
+}
+.totalChoice{
+    margin-top: 12px;
+}
+.totaltime{
+   /* height: 60px;*/
+    /* background: #E5F4FF; */
+    margin-top: 20px;
+
+}
+.form-group label {
+    text-align: right;
+    color: #636363 !important;
+    font-size: 14px;
+    font-weight: 500;
+}
+.form-group{
+    padding-left: 0 !important;
+    text-align: center;
+    white-space: nowrap;
+    height: 38px !important;
+    line-height: 30px;
+    width: 440px;
+    /* display:inline-block;*/
+}
+/*.realDataFlow .leftbarTable>p{
+
+    background: #1DB535;
+
+}*/
+/*.realDataFlow .companyAndIntegrator>p,.realDataFlow .rtuRealData >p{
+
+    background: #098CDD;
+
+}*/
+.realDataFlow .leftbarTableDetail>p,.realDataFlow .companyAndIntegrator>p,.realDataFlow .rtuRealData >p ,.realTimeTable>p{
+   /* height: 36px;
+    line-height: 35px;
+    font-size: 20px;
+    padding-left: 18px;
+    border-bottom: 1px solid #E4E8F0;
+    color: #556073;*/
+    height: 34px;
+    line-height: 34px;
+    height: 3rem;
+    line-height: 3rem;
+    font-weight: 600;
+    font-size: 14px;
+    padding-left: 8px;
+    border-bottom: 1px solid #E4E8F0;
+    color: #676a6c;
+}
+.realDataFlow .realTimeTable {
+    padding: 0;
+
+}
+.rtuRealData p>span{
+    font-size: 16px;
+    padding-left:20px;
+}
+.leftDetail{
+    float:left;
+    width: 118px;
+}
+.detailUsedContent{
+    width: 80%;
+    height: 20px;
+    border: 1px solid #c0bebe;
+    margin: 0px 35px;
+}
+.detailUsed{
+    padding-bottom: 30px;
+    color: #556073;
+    font-size: 15px;
+    border-bottom: 1px solid #efeeee;
+}
+.selected >.fancytree-title{
+    background:rgb(51, 122, 183)
+}
+.fancytree-plain.fancytree-container.fancytree-treefocus span.fancytree-node.fancytree-focused span.fancytree-title {
+    border-color: #337ab7;
+    background: #337ab7;
+    color:#fff;
+}
+.usedLength{
+    height:100%;
+    background: #06a1ff;
+}
+.packageDetailContent{
+    overflow:auto;
+    height: calc(100% - 36px);
+}
+.rightDetail{
+    float:right
+}
+.flowUsedDetail{
+    padding: 20px 35px 8px;
+}
+.rightDetail>p{
+    padding-bottom:3px
+}
+/*.realDataFlow .leftbarTable,.realDataFlow .rightbarTable{
+
+    min-height: 280px;
+    !* height:98%*!
+}*/
+.leftbarTable .tableContent>p{
+    height: 34px;
+    line-height: 34px;
+    height:3rem;
+    line-height: 3rem;
+    font-size: 14px;
+    padding: 0 4%;
+    color: #676a6c;
+}
+.leftbarTable{
+    position: relative;
+}
+.flowName{
+    position: absolute;
+
+    bottom: 5%;
+    margin-left: 45%;
+
+}
+.bottomEchart{
+    height:220px;
+    height: 18rem;
+    width: 100%;
+    }
+
+.red{
+    color: #ff1b11;
+}
+.leftbarTable .tableContent>p .middle{
+    float: right;
+
+}
+.blue{
+    color:#06a1ff;
+}
+.leaveFlow{
+
+    width: 50%;
+
+    text-align: center;
+    float: left;
+    font-size: 1.2rem;
+    height: calc(100% - 34px);
+    height: calc(100% - 3rem);
+    /* padding: 7%; */
+    padding-top: 2rem;
+}
+.remainFlowContent{
+    height: calc(100% - 60px);
+    height: calc(100% - 5rem);
+    width:100%;
+}
+.leaveFlowValue{
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2px;
+    margin-right: 4px;
+}
+#realDataBarEchart1{
+
+
+    width:100%;
+    height:100%;
+  /*  height: calc(100% - 34px);*/
+}
+.leaveEchart{
+
+    width: 50%;
+
+    float: right;
+    height:110px;
+    height:9rem;
+}
+.flowName{
+    text-align: center;
+    font-size: 14px;
+}
+.blankNotice{
+    height:100%;
+    width:100%;
+    background: #fff;
+    padding: 20% 0 0 45%;
+}
+
+
+.blankNoticeContent{
+    text-align: center;
+}
+.blankNotice p,.blankNoticeContent p{
+    font-size:22px;
+    color:#666666;
+}
+.icon-fail{
+    font-size: 32px;
+    padding-right: 10px;
+}
+.flowWarning {
+    padding: 2% 3% 0;
+
+}
+.query{
+    margin-top: 12px;
+}
+
+#ui-id-1 span.fancytree-level-1 span.fancytree-title {
+    padding-left: 5em !important;
+}
+
+#ui-id-1 span.fancytree-level-2 span.fancytree-title {
+    padding-left: 6.2em !important;
+
+}
+#ui-id-1 span.fancytree-title{
+    width: 100%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+#ui-id-1 span.fancytree-level-3 span.fancytree-title {
+    padding-left: 7.2em !important;
+
+}
+
+ul.fancytree-container > li {
+    text-align: left;
+    margin-left: 1.5em !important;
+}
+.companyAndIntegrator,.rtuRealData {
+    height:calc(100% - 34px);
+    height:calc(100% - 3rem);
+}
+#totalEchart2,#totalEchart3,#flowRankMonth{
+
+    height:calc(100% - 34px);
+    height:calc(100% - 3rem);
+}
+#totalEchart1,#totalEchartMonth{
+    height:100%;
+ /*   min-height: 330px;*/
+}
+#warningSetting{
+    margin-top: 35px;
+}
+.slider {
+    margin-left: 60px;
+}
+#ex6CurrentSliderValLabel{
+    width: 210px;
+    display: inline-block;
+    height: 20px;
+    margin-left: 60px;
+    margin-top: 15px;
+}
+.col-md-6,.col-sm-6{
+    width:50% !important;
+}
+.searchBtn,.searchBtn:hover,.searchBtn:active,.searchBtn:focus{
+    background: #1C95E5;
+    color: #fff;
+}
+.selected .fancytree-icon,.selected .fancytree-title,.fancytree-focused span.fancytree-icon {
+    color:#fff
+}
+.warningTable{
+    margin-top: 15px;
+    padding: 2.5%;
+    border: 1px solid #f7f4f4;
+    background-color: #fff;
+    overflow: auto;
+    margin-bottom: 17px;
+    box-shadow: 3px 1px 4px 1px #9d9a9a66;
+}
+#warningSetting>.irs{
+    margin: 0 40px;
+}
+.echartAll{
+    height:100%;
+    width: 100%;
+}
+.bottomBarTable{
+    margin-bottom:0;
+    margin-top:20px;
+}
+.lackData{
+    text-align: center;
+    padding-top: 22%;
+    font-size: 16px;
+    height: 100%;
+    color: #666666;
+
+}
+.leftbarTableDetail{
+    height:100%;
+    width:100%;
+}
+.leftbarTableDetail .tableContent{
+    height: calc( 100% - 34px);
+    height: calc(100% - 3rem);
+    width:100%;
+}
+.right-content,.realDataFlow {
+    width:100%
+}
+#echartFlowRatio{
+    height:calc(100% - 34px);
+    height:calc(100% - 3rem);
+}

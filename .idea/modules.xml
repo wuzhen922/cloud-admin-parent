@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-integrator/admin-integrator-service.iml" filepath="$PROJECT_DIR$/cloud-admin-integrator/admin-integrator-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-assist/cloud-admin-assist.iml" filepath="$PROJECT_DIR$/cloud-admin-assist/cloud-admin-assist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-common/cloud-admin-common.iml" filepath="$PROJECT_DIR$/cloud-admin-common/cloud-admin-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-data/cloud-admin-data.iml" filepath="$PROJECT_DIR$/cloud-admin-data/cloud-admin-data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-parent.iml" filepath="$PROJECT_DIR$/cloud-admin-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-portal/cloud-admin-portal.iml" filepath="$PROJECT_DIR$/cloud-admin-portal/cloud-admin-portal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-system/cloud-admin-system.iml" filepath="$PROJECT_DIR$/cloud-admin-system/cloud-admin-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud-admin-war/cloud-admin-war.iml" filepath="$PROJECT_DIR$/cloud-admin-war/cloud-admin-war.iml" />
+    </modules>
+  </component>
+</project>

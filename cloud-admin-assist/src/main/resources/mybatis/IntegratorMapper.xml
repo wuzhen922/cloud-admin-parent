@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IntegratorMapper">
+
+	<select id="queryIntegratorCount" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryIntegratorDto"
+		resultType="long">
+        SELECT
+          count(*)
+        FROM
+          t_integrator_manager_info manager
+        LEFT JOIN
+          t_integrator_info integrator
+        ON
+        manager.integrator_id = integrator.id
+        <where>
+            <if test="null != userName and '' != userName">
+                and manager.user_name LIKE CONCAT(#{userName}, '%')
+            </if>
+            <if test="null != company and '' != company">
+                and integrator.company LIKE CONCAT(CONCAT('%', #{company}), '%')
+            </if>
+            <if test="null != phone and '' != phone">
+                and manager.phone = #{phone}
+            </if>
+            and integrator.status IN ("10", "20")
+        </where>
+	</select>
+
+    <select id="queryIntegratorList" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryIntegratorDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.QueryIntegratorDto">
+        SELECT
+          integrator.id AS id,
+          manager.user_name AS userName,
+          manager.real_name AS realName,
+          integrator.company AS company,
+          integrator.address AS address,
+          manager.phone AS phone,
+          integrator.admittance AS admittance,
+          integrator.integrator_key AS integratorKey,
+          integrator.secret AS secret,
+          integrator.status AS status,
+          integrator.create_time AS createTime,
+          integrator.last_update_time AS lastCreateTime,
+          integrator.remark As remark
+
+        FROM
+          t_integrator_manager_info manager
+        LEFT JOIN
+          t_integrator_info integrator
+        ON
+          manager.integrator_id = integrator.id
+        <where>
+            <if test="null != userName and '' != userName">
+                and manager.user_name LIKE CONCAT(#{userName}, '%')
+            </if>
+            <if test="null != company and '' != company">
+                and integrator.company LIKE CONCAT(CONCAT('%', #{company}), '%')
+            </if>
+            <if test="null != phone and '' != phone">
+                and manager.phone = #{phone}
+            </if>
+            and integrator.status IN ("10", "20")
+        </where>
+        ORDER BY manager.create_time desc
+    </select>
+
+    <!-- 更改集成商状态,同时禁用该集成商下的所有RTU和传感器装态 -->
+    <update id="changeIntegratorStatus" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+          t_integrator_info integrator
+        SET
+          integrator.status = #{status},
+          integrator.remark = #{remark},
+          integrator.last_update_time = now()
+
+<!--        <if test="null != status and '' != status">
+            integrator.status = #{status}
+        </if>
+        <if test="null != remark and '' != remark">
+            integrator.remark = #{remark}
+        </if>-->
+        WHERE
+          integrator.id = #{id}
+    </update>
+
+    <!-- 更改业主企业状态，适用于启用和禁用-->
+    <update id="changeOwnerStatus" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+          t_owner_org owner
+        SET
+            owner.status = #{status},
+            owner.last_update_time = now()
+        WHERE
+            owner.integrator_id = #{id}
+    </update>
+
+    <!-- 更改RTU状态，适用于启用和禁用-->
+    <update id="changeRtuStatus" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+          t_rtu_info rtu
+        SET
+          rtu.status = #{status},
+          rtu.last_update_time = now()
+        WHERE
+          rtu.integrator_id = #{id}
+    </update>
+
+    <!-- 更改传感器状态，适用于启用和禁用-->
+    <update id="changeSensorStatus" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+          t_sensor_info sensor
+
+        SET
+          sensor.status = #{status},
+          sensor.last_update_time = now()
+        WHERE
+          sensor.integrator_id = #{id}
+    </update>
+
+
+
+    <!-- 删除集成商,同时删除该集成商下所有的管理员、业主企业、RTU和传感器 -->
+    <update id="deleteIntegrator" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+        t_integrator_info integrator
+        LEFT JOIN
+        t_integrator_manager_info manager
+        ON
+        integrator.id = manager.integrator_id
+        SET
+        integrator.status = #{status},
+        integrator.remark = #{remark},
+        integrator.last_update_time = now(),
+        manager.status = #{status},
+        manager.last_update_time = now()
+
+        WHERE
+        integrator.id = #{id}
+    </update>
+
+    <!-- 删除业主企业-->
+    <update id="deleteOwner" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+        t_owner_org owner
+        SET
+        owner.status = #{status},
+        owner.last_update_time = now()
+        WHERE
+        owner.integrator_id = #{id}
+    </update>
+
+    <!-- 删除RTU-->
+    <update id="deleteRtu" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+        t_rtu_info rtu
+        SET
+        rtu.status = #{status},
+        rtu.last_update_time = now()
+        WHERE
+        rtu.integrator_id = #{id}
+    </update>
+
+    <!-- 删除传感器-->
+    <update id="deleteSensor" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        UPDATE
+        t_sensor_info sensor
+        LEFT JOIN
+        t_sensor_parameter parameter
+        ON
+        sensor.sensor_number = parameter.sensor_number
+        SET
+        sensor.status = #{status},
+        parameter.status = #{status},
+        sensor.last_update_time = now(),
+        parameter.last_update_time = now()
+        WHERE
+        sensor.integrator_id = #{id}
+    </update>
+
+    <!-- 查询集成商列表用于下拉框选择 -->
+    <select id="selectList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        SELECT
+        integrator.id AS id,
+        integrator.company AS company
+        FROM
+        t_integrator_info integrator
+        WHERE
+        integrator.status IN ("10", "20") AND integrator.company IS NOT NULL
+    </select>
+
+    <!--导出集成商网关设备信息-->
+    <select id="exportRtuInfo" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo"
+            resultType="java.util.LinkedHashMap">
+        SELECT
+            if(isnull(rtu.rtu_name),'',rtu.rtu_name) as rtuName,
+            if(isnull(rtu.rtu_model),'',rtu.rtu_model) as rtuModel,
+            if(isnull(rtu.rtu_trans_type),'',(case rtu.rtu_trans_type
+              when '00' then '4G'
+              when '10' then 'NB-IOT'
+              when '20' then '北斗'
+              when '30' then '天通' end)) as rtuRransType,
+            if(isnull(rtu.rtu_access_type),'',(CASE rtu.rtu_access_type
+              when '99' then '单通道'
+              when '10' then '多通道' end)) as rtuAccessType,
+            if(isnull(rtu.sn_number),'',rtu.sn_number) as snNumber,
+            if(isnull(rtu.carrier_operator_enum),'',rtu.carrier_operator_enum) as operator
+        FROM t_rtu_info rtu
+        WHERE rtu.integrator_id = #{id} and rtu.status NOT IN ("99")
+
+    </select>
+
+    <select id="selectIntegratorAccessCode" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.IntegratorDmo">
+        SELECT
+        integrator.id as id,
+        integrator.company as company,
+        integrator.admittance AS admittance,
+        integrator.status AS status
+        FROM
+        t_integrator_info integrator
+        WHERE integrator.status NOT IN ("99")
+    </select>
+
+</mapper>

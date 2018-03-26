@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="admin-integrator-service" />
+        <module name="cloud-admin-assist" />
+        <module name="cloud-admin-common" />
+        <module name="cloud-admin-data" />
+        <module name="cloud-admin-portal" />
+        <module name="cloud-admin-system" />
+        <module name="cloud-admin-war" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="admin-integrator-service" target="1.7" />
+      <module name="cloud-admin-assist" target="1.7" />
+      <module name="cloud-admin-common" target="1.7" />
+      <module name="cloud-admin-data" target="1.7" />
+      <module name="cloud-admin-parent" target="1.7" />
+      <module name="cloud-admin-portal" target="1.7" />
+      <module name="cloud-admin-system" target="1.7" />
+      <module name="cloud-admin-war" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

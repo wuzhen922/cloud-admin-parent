@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AdminRoleInfoMapper">
+
+    <select id="queryRoleInfoCount" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RoleInfoDmo"
+            resultType="long">
+        select count(*) from
+        t_cloud_role_info
+        where
+            <if test="roleName!=null">
+                and role_name=#{roleName}
+            </if>
+        status = #{status}
+        <if test="roleName!=null">
+            and role_name=#{roleName}
+        </if>
+    </select>
+
+
+    <select id="queryRoleInfoList" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RoleInfoDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RoleInfoDmo">
+        select
+        role.id as id,
+        role.role_name as roleName,
+        role.description as description,
+        role.create_time as createTime
+        from
+        t_cloud_role_info role
+        where
+        status = #{status}
+            <if test="roleName!=null">
+                and role_name=#{roleName}
+            </if>
+        order by id desc
+    </select>
+
+    <select id="queryMenuListByRole" parameterType="java.util.HashMap"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.MenuTreeNodeDto">
+        SELECT
+          menu.id as id,
+          menu.parent_id as parentId,
+          menu.menu_name as name,
+          IF(ISNULL(role.role_id),'false','true') AS checked,
+          if(menu.menu_level = #{subMenuLevel},'false','true')as open
+        FROM
+        (
+            SELECT
+                 *
+             FROM
+                 t_cloud_menu_info menu
+             where
+                 status = #{menuStatus}
+
+
+        )menu
+          LEFT JOIN
+          (
+            SELECT
+              *
+            FROM
+            t_cloud_role_menu
+            where
+              role_id = #{roleId}
+          )role
+            ON menu.id = role.menu_id
+        ORDER BY menu.sort
+    </select>
+
+    <insert id="updateRoleMenuInfo" parameterType="com.eyelake.cloud.admin.assist.dto.admin.RoleMenuInfoDto">
+        INSERT INTO
+        t_cloud_role_menu(role_id, menu_id, create_time)
+        VALUES
+        <foreach item="item" collection="menuIdList" separator="," index="index">
+            (#{roleId},#{item},CURRENT_TIMESTAMP)
+        </foreach>
+    </insert>
+
+    <select id="findRoleInfoByUserId" parameterType="java.util.HashMap"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RoleInfoDmo">
+        SELECT
+            role_name as roleName
+        FROM
+            t_cloud_role_info role_info
+        JOIN
+            t_cloud_admin_role admin_role
+        ON
+          role_info.id = admin_role.role_id
+        AND
+          admin_role.user_id = #{userId}
+    </select>
+
+    <delete id="deleteRoleMenu" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RoleMenuDmo">
+        delete from t_cloud_role_menu where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteAdminRole" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.AdminRoleDmo">
+        delete from t_cloud_admin_role where role_id = #{roleId}
+    </delete>
+
+</mapper>

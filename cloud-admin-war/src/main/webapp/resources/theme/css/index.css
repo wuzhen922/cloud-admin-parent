@@ -1,0 +1,94 @@
+.realTimeTable {
+    margin-top: 20px;
+    /* padding: 5px; */
+    border: 1px solid #f7f4f4;
+    background-color: #fff;
+    overflow: auto;
+    /* margin-bottom: 17px; */
+    box-shadow: 3px 1px 4px 1px #9d9a9a66;
+}
+.mainContainer{
+    background: #f1f2ff;
+    padding: 2%;
+    min-width: 1500px;
+}
+.realTimeTable>p,.systemDefault>p{
+    height: 34px;
+    line-height: 34px;
+    font-weight: 600;
+    font-size: 14px;
+    padding-left: 8px;
+    border-bottom: 1px solid #E4E8F0;
+    color: #676a6c;
+}
+#flowWarningTable{
+
+    padding: 1.5% 1.5% 0;
+}
+.realDataContent{
+    height: 400px;
+  /*  height: 38rem;*/
+}
+.icon-jiantou1{
+   font-size:14px;
+    padding-left:5px;
+
+}
+.more{
+    margin-right: 12px;
+    margin-right: 1rem;
+    float:right;
+}
+.icon-gaojing{
+    font-size:14px;
+    color: #dbb424;
+    padding-right:5px
+}
+.icon-xuniwangqia81{
+    font-size:14px;
+    padding-right:5px;
+    color:#1C95E5
+}
+.icon-paimingkaoqian-01{
+    font-size:14px;
+    padding-right:5px;
+}
+.leftbarTable {
+    width: 49.5%;
+    display: inline-block;
+    float: left;
+    height: 100%;
+}
+.rightbarTable {
+    width: 49.5%;
+    display: inline-block;
+    float: right;
+    height: 100%;
+}
+.echartPie{
+    float: left;
+    height: 33.333%;
+     width: 50%;
+
+}
+.pieEchart{
+    width:100%;
+    height:100%;
+}
+.totalPieEchart,.rankDiv{
+    overflow: hidden;
+    height: calc(100% - 34px);
+}
+.rankBar{
+    height:49%;
+    width:98%
+}
+.greenTd{
+    color:green !important;
+}
+.redTd{
+    color:red !important;
+}
+.yellowTd{
+    color:#c0c012 !important
+}

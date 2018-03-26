@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RtuMapper">
+
+	<select id="queryRtuCount" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto"
+		resultType="long">
+        SELECT
+          count(*)
+        FROM
+          t_rtu_info rtu
+        <where>
+            <if test="null != rtuName and '' != rtuName">
+                and rtu.rtu_name LIKE CONCAT('%', #{rtuName}, '%')
+            </if>
+            <if test="null != rtuTransType and '' != rtuTransType">
+                and rtu.rtu_trans_type = #{rtuTransType}
+            </if>
+            <if test="null != integratorId and '' != integratorId">
+                and rtu.integrator_id = #{integratorId}
+            </if>
+         AND rtu.status IN ("00","10", "20")
+        </where>
+	</select>
+    <!-- 查询RTU列表-->
+    <select id="queryRtuList" parameterType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.admin.QueryRtuDto">
+        SELECT
+        rtu.id AS id,
+        rtu.rtu_name AS rtuName,
+        rtu.rtu_model AS rtuModel,
+        rtu.rtu_trans_type AS rtuTransType,
+        rtu.rtu_access_type AS rtuAccessType,
+        rtu.machine_code as machineCode,
+        rtu.sn_number AS snNumber,
+        rtu.carrier_operator_enum AS operator,
+        rtu.create_time AS createTime,
+        rtu.status AS status,
+        rtu.integrator_id AS integratorId,
+        rtu.integrator_name as company,
+        rtu.last_update_time AS lastUpdateTime,
+        group_concat(pack.pack_name separator ';')  as packname
+        FROM
+        t_rtu_info rtu
+        LEFT JOIN
+        t_rtu_pack rtuPack
+        ON rtu.sn_number = rtuPack.sn_number
+        LEFT JOIN
+        t_pack_info pack
+        ON rtuPack.pack_num = pack.pack_num
+        <where>
+            <if test="null != rtuName and '' != rtuName">
+                and rtu.rtu_name LIKE CONCAT('%', #{rtuName}, '%')
+            </if>
+            <if test="null != rtuTransType and '' != rtuTransType">
+                and rtu.rtu_trans_type = #{rtuTransType}
+            </if>
+            <if test="null != integratorId and '' != integratorId">
+                and rtu.integrator_id = #{integratorId}
+            </if>
+            AND rtu.status IN ("00", "10", "20")
+        </where>
+        GROUP BY rtu.sn_number
+        ORDER BY rtu.create_time desc
+    </select>
+
+    <!-- 更改RTU状态,同时更改该RTU设备下的传感器状态,适用于启用和禁用 -->
+    <update id="changeRtuStatus" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo">
+
+        UPDATE
+          t_rtu_info rtu
+        LEFT JOIN
+          t_sensor_info sensor
+        ON
+          rtu.id = sensor.rtu_id
+        SET
+            rtu.status = #{status},
+            sensor.status =#{status},
+            rtu.last_update_time = NOW(),
+            sensor.last_update_time = NOW()
+        WHERE
+            rtu.id = #{id}
+    </update>
+
+    <!-- 软删除RTU -->
+    <update id="deleteRtu" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo">
+
+        UPDATE
+        t_rtu_info rtu
+        SET
+        rtu.status = #{status},
+        rtu.last_update_time = NOW()
+        WHERE
+        rtu.id = #{id}
+    </update>
+
+    <!-- 批量删除Rtu -->
+
+    <update id="batchDeleteRtu" parameterType="com.eyelake.cloud.admin.assist.dto.admin.BatchDeleteRtuDto">
+
+        UPDATE
+        t_rtu_info rtu
+        SET
+        rtu.status = #{status},
+        rtu.last_update_time = NOW()
+        WHERE rtu.id  in
+        <foreach item="item" collection="rtuDmoList" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+
+    </update>
+
+    <!-- 按照SN码或者机器码查询RTU列表-->
+    <select id="queryRtuBySomething" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo"
+            resultType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo">
+        SELECT
+        rtu.id AS id,
+        rtu.rtu_name AS rtuName,
+        rtu.rtu_trans_type AS rtuTransType,
+        rtu.rtu_access_type AS rtuAccessType,
+        rtu.sn_number AS snNumber,
+        rtu.machine_code as machineCode,
+        rtu.integrator_id as integratorId,
+        rtu.integrator_name as integratorName,
+        rtu.carrier_operator_enum as carrierOperatorEnum,
+        rtu.status AS status,
+        rtu.create_time AS createTime,
+        rtu.last_update_time AS lastUpdateTime
+        FROM
+        t_rtu_info rtu
+
+        <where>
+            <if test="null != machineCode and '' != machineCode">
+                and rtu.machine_code = #{machineCode}
+            </if>
+            <if test="null != snNumber and '' != snNumber">
+                and rtu.sn_number = #{snNumber}
+            </if>
+            AND rtu.status not in ("99")
+        </where>
+        ORDER BY rtu.create_time desc
+    </select>
+
+    <!--根据sn码更新rtu-->
+    <update id="updateRtuByMachine" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuDmo">
+        update
+        t_rtu_info
+        set rtu_name = #{rtuName},rtu_model = #{rtuModel},rtu_trans_type = #{rtuTransType},rtu_access_type = #{rtuAccessType},sn_number = #{snNumber},carrier_operator_enum = #{carrierOperatorEnum},integrator_id = #{integratorId},integrator_name = #{integratorName},last_update_time = #{lastUpdateTime}
+        where machine_code = #{machineCode} and status = '00'
+    </update>
+
+    <!--导入，批量插入rtu信息-->
+    <insert id="batchInsertRtuList" parameterType="com.eyelake.cloud.admin.assist.dto.admin.BatchInsertRtuDto">
+        INSERT INTO
+        t_rtu_info(rtu_name,rtu_model,rtu_trans_type,rtu_access_type,sn_number,machine_code,integrator_id,integrator_name,carrier_operator_enum,status,create_time,last_update_time)
+        VALUES
+        <foreach item="item" collection="insertRtuList" separator="," index="index">
+            (#{item.rtuName},#{item.rtuModel},#{item.rtuTransType},#{item.rtuAccessType},#{item.snNumber},#{item.machineCode},#{item.integratorId},#{item.integratorName},#{item.carrierOperatorEnum},#{item.status},#{item.createTime},#{item.lastUpdateTime})
+        </foreach>
+    </insert>
+</mapper>

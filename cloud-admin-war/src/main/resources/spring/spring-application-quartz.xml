@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!--############################# 任务 JobClass ######################################-->
+
+    <!-- 定时任务 -->
+    <bean id="demoTask" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.eyelake.cloud.admin.data.task.DemoTask"/>
+    </bean>
+
+    <!--每日更新的定时任务，更新网关月流量表、网关日流量表、网卡预警表-->
+    <bean id="dayTask" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.eyelake.cloud.admin.data.task.DayTask"/>
+    </bean>
+
+    <!--网关与套餐关联表的定时任务，每天-->
+    <bean id="rtuPackTask" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.eyelake.cloud.admin.data.task.RtuPackTask"/>
+    </bean>
+
+    <!--年流量表的维护，每个月月初维护上一个月的年流量表-->
+    <bean id="monthTask" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.eyelake.cloud.admin.data.task.MonthTask"/>
+    </bean>
+
+    <!--日、月流量表的维护（除Rtu的）-->
+    <bean id="dayMonthStatisticsTask" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.eyelake.cloud.admin.data.task.DayMonthStatisticsTask"/>
+    </bean>
+
+    <!--############################# 触发器 CronTrigger ######################################-->
+
+    <!--定时任务1分钟执行一次-->
+    <bean id="demoTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="demoTask"/>
+        <property name="cronExpression" value="0 * * * * ?"/>
+    </bean>
+
+    <!--每日更新的定时任务，更新网关月流量表、网关日流量表、网卡预警表-->
+    <!--定时任务每天23:00执行一次-->
+    <bean id="dayTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="dayTask"/>
+        <property name="cronExpression" value="0 0 23 * * ?"/>
+    </bean>
+
+    <bean id="rtuPackTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="rtuPackTask"/>
+        <property name="cronExpression" value="0 0 0 * * ?"/>
+    </bean>
+
+    <bean id="monthTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="monthTask"/>
+        <property name="cronExpression" value="0 0 2 1 * ?"/>
+    </bean>
+
+    <bean id="dayMonthStatisticsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="dayMonthStatisticsTask"/>
+        <property name="cronExpression" value="0 0 1 * * ?"/>
+    </bean>
+
+    <!--<bean id="dayMonthStatisticsCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="dayMonthStatisticsTask"/>
+        <property name="cronExpression" value="0 */2 * * * ?"/>
+    </bean>-->
+
+
+    <!--############################# 计划触发器 SchedulerTrigger ######################################-->
+
+
+    <bean id="schedulerTrigger" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <!--<ref bean="demoTaskCronTrigger"/>-->
+                <ref bean="rtuPackTaskCronTrigger"/>
+                <ref bean="monthTaskCronTrigger"/>
+                <ref bean="dayTaskCronTrigger"/>
+                <ref bean="dayMonthStatisticsCronTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

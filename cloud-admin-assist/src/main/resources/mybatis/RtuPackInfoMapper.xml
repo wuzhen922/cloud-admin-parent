@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RtuPackInfoMapper">
+
+
+    <insert id="batchInsertRtuPackInfo" parameterType="com.eyelake.cloud.admin.data.dto.RtuPackDto">
+        INSERT INTO
+        t_rtu_pack(sn_number, pack_num, status, create_time, last_update_time)
+        VALUES
+        <foreach item="item" collection="rtuPackDmoList" separator="," index="index">
+            (#{item.snNumber},#{item.packNum},#{item.status},#{item.createTime},#{item.lastUpdateTime})
+        </foreach>
+
+    </insert>
+
+    <update id="updateRtuPackInfo" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuPackDmo">
+        UPDATE t_rtu_pack SET status = '99' WHERE sn_number = #{snNumber}
+    </update>
+
+</mapper>

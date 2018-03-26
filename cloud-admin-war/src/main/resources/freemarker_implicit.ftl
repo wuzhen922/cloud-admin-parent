@@ -1,0 +1,5 @@
+[#ftl]
+[#-- @implicitly included --]
+[#-- @ftlroot "../webapp/WEB-INF/template/" --]
+[#-- @ftlvariable name="xml_escape" type="java.lang.String"--]
+[#import "/common/htmltag.ftl" as p]

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cloud-admin-parent</artifactId>
+        <groupId>com.eyelake.link</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>cloud-admin-data</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.eyelake.link</groupId>
+            <artifactId>cloud-admin-common</artifactId>
+            <version>${cloud-admin-version}</version>
+        </dependency>
+
+        <!--iot-framework begin-->
+        <dependency>
+            <groupId>com.eyelake.framework</groupId>
+            <artifactId>iot-framework-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.eyelake.framework</groupId>
+            <artifactId>iot-framework-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.eyelake.framework</groupId>
+            <artifactId>iot-framework-dal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.eyelake.framework</groupId>
+            <artifactId>iot-framework-web</artifactId>
+        </dependency>
+        <!--iot-framework end-->
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+
+
+        <!--aliyun Sdk-->
+        <dependency>
+            <groupId>com.eyelake.sdk</groupId>
+            <artifactId>aliyun-sdk-core</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.eyelake.sdk</groupId>
+            <artifactId>aliyun-sdk-dyiotapi</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
+        <!--quartz-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>1.8.4</version>
+        </dependency><dependency>
+        <groupId>com.eyelake.link</groupId>
+        <artifactId>cloud-admin-assist</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+        <dependency>
+            <groupId>com.eyelake.link</groupId>
+            <artifactId>cloud-admin-assist</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

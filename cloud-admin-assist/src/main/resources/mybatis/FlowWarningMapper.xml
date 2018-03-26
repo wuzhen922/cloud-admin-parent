@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="FlowWarningMapper">
+<!--    查预警表数量-->
+    <select id="countWarning" parameterType="com.eyelake.cloud.admin.assist.dto.account.FlowWarningDto"
+            resultType="long">
+        select
+        count(*)
+        from
+        t_rtu_info info
+        LEFT JOIN
+        t_rtu_warning warning
+        on  info.sn_number  = warning.sn_number
+        <where>
+            <if test="rtuName != null and rtuName != ''">
+                and info.rtu_name LIKE CONCAT('%', #{rtuName}, '%')
+            </if>
+            <if test="integratorId != null and integratorId != ''">
+                and  info.integrator_id = #{integratorId}
+            </if>
+            and info.status in('10','20')
+        </where>
+    </select>
+<!--分页查预警数据-->
+    <select id="queryFlowList" parameterType="com.eyelake.cloud.admin.assist.dto.account.FlowWarningDto"
+            resultType="com.eyelake.cloud.admin.assist.dto.account.FlowWarningDto">
+        select
+        info.id as id,
+        info.rtu_name as rtuName,
+        info.rtu_model as rtuModel,
+        info.sn_number as snNumber,
+        info.machine_code as machineCode,
+        IF(ISNULL(info.owner_id),'0',info.owner_id) as ownerId,
+        info.org_name as orgName,
+        info.status as status,
+        info.carrier_operator_enum as carrierOperatorEnum,
+        info.rtu_trans_type as rtuTransType,
+        info.integrator_id as integratorId,
+        info.integrator_name as integratorName,
+        warning.warning_num as warningNum,
+        warning.cost_num as costNum,
+        warning.pack_name as packName,
+        warning.pack_traffic as packTraffic,
+        warning.warning_status as warningStatus,
+        warning.last_update_time as lastUpdateTime
+        from
+        t_rtu_info info
+        LEFT JOIN
+        t_rtu_warning warning
+        on  info.sn_number  = warning.sn_number
+        <where>
+            <if test="rtuName != null and rtuName != ''">
+                and info.rtu_name LIKE CONCAT('%', #{rtuName}, '%')
+            </if>
+            <if test="integratorId != null and integratorId != ''">
+                and info.integrator_id = #{integratorId}
+            </if>
+            and info.status in('10','20')
+        </where>
+        ORDER BY warning.warning_status desc,warning.last_update_time desc
+    </select>
+  <!--  更新阈值表-->
+    <update id="updateWarning" parameterType="com.eyelake.cloud.admin.assist.dmo.admin.RtuWarningDmo">
+        update
+        t_rtu_warning
+        set warning_status =#{warningStatus},warning_num = #{warningNum},last_update_time = #{lastUpdateTime}
+
+        where sn_number = #{snNumber} AND status = '10'
+    </update>
+    <!--查阈值-->
+    <select id="selectWarning" parameterType="com.eyelake.cloud.admin.assist.dto.account.FlowWarningDto">
+        select
+
+         warning.warning_num as warningNum,
+        warning.cost_num as costNum,
+        warning.pack_name as packName,
+        warning.pack_traffic as packTraffic,
+        warning.warning_status as warningStatus
+        from
+        t_rtu_warning
+
+        where sn_number = #{snNumber}
+    </select>
+
+
+</mapper>
